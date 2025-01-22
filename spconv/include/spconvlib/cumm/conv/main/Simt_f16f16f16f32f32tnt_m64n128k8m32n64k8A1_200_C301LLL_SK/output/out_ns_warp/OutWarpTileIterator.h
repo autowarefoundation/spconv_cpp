@@ -1,0 +1,62 @@
+#pragma once
+#include <spconvlib/cumm/common/TensorViewNVRTC.h>
+#include <spconvlib/cumm/common/GemmBasicKernel.h>
+#include <spconvlib/cumm/conv/main/Simt_f16f16f16f32f32tnt_m64n128k8m32n64k8A1_200_C301LLL_SK/mma/mma_ns_wa/ns2/RowMajorInterleaved.h>
+namespace spconvlib {
+namespace cumm {
+namespace conv {
+namespace main {
+namespace Simt_f16f16f16f32f32tnt_m64n128k8m32n64k8A1_200_C301LLL_SK {
+namespace output {
+namespace out_ns_warp {
+using TensorViewNVRTC = spconvlib::cumm::common::TensorViewNVRTC;
+using GemmBasicKernel = spconvlib::cumm::common::GemmBasicKernel;
+using LaneLayout = spconvlib::cumm::conv::main::Simt_f16f16f16f32f32tnt_m64n128k8m32n64k8A1_200_C301LLL_SK::mma::mma_ns_wa::ns2::RowMajorInterleaved;
+struct OutWarpTileIterator {
+  tv::alignedarray<int, 1, 4> * pointer_;
+  __forceinline__ __device__  OutWarpTileIterator(float * ptr, int warp_offset_m, int warp_offset_n, int lane_idx)   {
+    constexpr auto lane_layout = LaneLayout::from_shape({4, 8});
+    tv::array<int, 2> logical_offset{warp_offset_m, warp_offset_n};
+    // 0, 1, 0, 1, 0, 1, ..., 2, 3, 2, 3, 2, 3
+    int lane_offset_0 = lane_layout.inverse_0(lane_idx);
+    // 0, 0, 1, 1, 2, 2, 3, 3, ...
+    int lane_offset_1 = lane_layout.inverse_1(lane_idx);
+    // saved to compacted shared memory, so logical_offset[0] * warp_shape[0],
+    // not logical_offset[0] * warp_tile_shape[0]
+    pointer_ = reinterpret_cast<tv::alignedarray<int, 1, 4> *>(
+        ptr + (logical_offset[0] * 4 + lane_offset_0) * 161 +
+        logical_offset[1] * 64 +
+        lane_offset_1 * 8);
+  }
+  __forceinline__ __device__ void store_with_pointer_offset(tv::array<float, 8, 0> const& frag, int32_t pointer_offset)   {
+    // pointer_offset: element unit
+    const tv::alignedarray<int, 1, 4> * dst_ptr =
+        reinterpret_cast<const tv::alignedarray<int, 1, 4> *>(&frag);
+    TV_PRAGMA_UNROLL
+    for (int acc_idx = 0; acc_idx < 1; ++acc_idx) {
+        if (true) {
+            TV_PRAGMA_UNROLL
+            for (int s = 0; s < 8; ++s) {
+                pointer_[acc_idx * 8 * 8 + s +
+                        pointer_offset] = dst_ptr[acc_idx * 8 + s];
+            }
+        } else {
+            pointer_[acc_idx * 8 +
+                    pointer_offset / 8] = dst_ptr[acc_idx];
+        }
+    }
+  }
+  __forceinline__ __device__ void store(tv::array<float, 8, 0> const& frag)   {
+    store_with_pointer_offset(frag, 0);
+  }
+  __forceinline__ __device__ void add_pointer_offset(int pointer_offset)   {
+    pointer_ += pointer_offset / 1;
+  }
+};
+} // namespace out_ns_warp
+} // namespace output
+} // namespace Simt_f16f16f16f32f32tnt_m64n128k8m32n64k8A1_200_C301LLL_SK
+} // namespace main
+} // namespace conv
+} // namespace cumm
+} // namespace spconvlib
