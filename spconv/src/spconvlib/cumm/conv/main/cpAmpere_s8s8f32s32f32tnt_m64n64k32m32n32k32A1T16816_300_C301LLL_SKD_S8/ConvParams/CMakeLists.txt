@@ -8,8 +8,7 @@ set_target_properties( spconvlib_cumm_conv_main_cpAmpere_s8s8f32s32f32tnt_m64n64
 # set_target_properties(spconvlib_cumm_conv_main_cpAmpere_s8s8f32s32f32tnt_m64n64k32m32n32k32A1T16816_300_C301LLL_SKD_S8_ConvParams PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
 
 target_include_directories(spconvlib_cumm_conv_main_cpAmpere_s8s8f32s32f32tnt_m64n64k32m32n32k32A1T16816_300_C301LLL_SKD_S8_ConvParams PRIVATE
-    /usr/local/cuda/include
-    /home/kenzo/.local/lib/python3.10/site-packages/cumm/include)
+    /usr/local/cuda/include)
 target_compile_options(spconvlib_cumm_conv_main_cpAmpere_s8s8f32s32f32tnt_m64n64k32m32n32k32A1T16816_300_C301LLL_SKD_S8_ConvParams PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
      -DTV_CUDA
     --expt-relaxed-constexpr

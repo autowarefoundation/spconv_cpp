@@ -8,8 +8,7 @@ set_target_properties( spconvlib_cumm_conv_main_Ampere_s8s8s8s32f32tnt_m256n128k
 # set_target_properties(spconvlib_cumm_conv_main_Ampere_s8s8s8s32f32tnt_m256n128k64m128n64k64A1T16832_400_C301LLL_SK_S8_ConvKernel PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
 
 target_include_directories(spconvlib_cumm_conv_main_Ampere_s8s8s8s32f32tnt_m256n128k64m128n64k64A1T16832_400_C301LLL_SK_S8_ConvKernel PRIVATE
-    /usr/local/cuda/include
-    /home/kenzo/.local/lib/python3.10/site-packages/cumm/include)
+    /usr/local/cuda/include)
 target_compile_options(spconvlib_cumm_conv_main_Ampere_s8s8s8s32f32tnt_m256n128k64m128n64k64A1T16832_400_C301LLL_SK_S8_ConvKernel PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
      -DTV_CUDA
     -gencode=arch=compute_75,code=sm_75

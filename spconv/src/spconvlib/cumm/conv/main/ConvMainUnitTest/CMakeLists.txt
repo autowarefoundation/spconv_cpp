@@ -8,8 +8,7 @@ set_target_properties( spconvlib_cumm_conv_main_ConvMainUnitTest PROPERTIES CXX_
 # set_target_properties(spconvlib_cumm_conv_main_ConvMainUnitTest PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
 
 target_include_directories(spconvlib_cumm_conv_main_ConvMainUnitTest PRIVATE
-    /usr/local/cuda/include
-    /home/kenzo/.local/lib/python3.10/site-packages/cumm/include)
+    /usr/local/cuda/include)
 target_compile_options(spconvlib_cumm_conv_main_ConvMainUnitTest PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
      -DTV_CUDA
     -gencode=arch=compute_75,code=sm_75

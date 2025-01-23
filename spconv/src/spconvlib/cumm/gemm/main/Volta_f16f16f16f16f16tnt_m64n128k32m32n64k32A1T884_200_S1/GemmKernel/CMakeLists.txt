@@ -8,8 +8,7 @@ set_target_properties( spconvlib_cumm_gemm_main_Volta_f16f16f16f16f16tnt_m64n128
 # set_target_properties(spconvlib_cumm_gemm_main_Volta_f16f16f16f16f16tnt_m64n128k32m32n64k32A1T884_200_S1_GemmKernel PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
 
 target_include_directories(spconvlib_cumm_gemm_main_Volta_f16f16f16f16f16tnt_m64n128k32m32n64k32A1T884_200_S1_GemmKernel PRIVATE
-    /usr/local/cuda/include
-    /home/kenzo/.local/lib/python3.10/site-packages/cumm/include)
+    /usr/local/cuda/include)
 target_compile_options(spconvlib_cumm_gemm_main_Volta_f16f16f16f16f16tnt_m64n128k32m32n64k32A1T884_200_S1_GemmKernel PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
      -DTV_CUDA
     -gencode=arch=compute_75,code=sm_75

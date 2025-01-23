@@ -8,8 +8,7 @@ set_target_properties( spconvlib_spconv_csrc_sparse_all_ops4d_Point2Voxel PROPER
 # set_target_properties(spconvlib_spconv_csrc_sparse_all_ops4d_Point2Voxel PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
 
 target_include_directories(spconvlib_spconv_csrc_sparse_all_ops4d_Point2Voxel PRIVATE
-    /usr/local/cuda/include
-    /home/kenzo/.local/lib/python3.10/site-packages/cumm/include)
+    /usr/local/cuda/include)
 target_compile_options(spconvlib_spconv_csrc_sparse_all_ops4d_Point2Voxel PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
      -DTV_CUDA
     -gencode=arch=compute_75,code=sm_75

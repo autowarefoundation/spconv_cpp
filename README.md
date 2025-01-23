@@ -21,6 +21,8 @@ cd ../../ && sudo apt-get install ./cumm/_packages/cumm_0.5.3_amd64.deb
 # spconv
 mkdir -p spconv/build && cd spconv/build && cmake .. && make -j $(nproc) && cpack -G DEB
 
+# The package is generated in spconv/_packages/spconv_2.3.8_amd64.deb
+cd ../../ && sudo apt-get install ./spconv/_packages/spconv_2.3.8_amd64.deb
 ```
 
 # License
