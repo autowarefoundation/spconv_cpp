@@ -17,3 +17,7 @@ endif()
 
 set(CUMM_INCLUDE_PATH
     ${CUMM_INSTALL_PREFIX}/include)
+set(CUMM_INCLUDE_DIR
+    ${CUMM_INSTALL_PREFIX}/include)
+set(CUMM_INCLUDE_DIRS
+    ${CUMM_INSTALL_PREFIX}/include)

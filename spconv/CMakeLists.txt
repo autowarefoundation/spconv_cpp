@@ -20,18 +20,11 @@ configure_package_config_file(
     INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spconv
 )
 
-
-include_directories(include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_subdirectory(src)
 # tell parent spconv2 include path.
 set(SPCONV2_INCLUDE_PATH ${${PROJECT_NAME}_SOURCE_DIR}/include PARENT_SCOPE)
-
-#install (TARGETS spconv
-#         ARCHIVE DESTINATION lib
-#         LIBRARY DESTINATION lib
-#         RUNTIME DESTINATION bin)
-
 
 # Install the shared library
 install(TARGETS spconv
@@ -39,13 +32,11 @@ install(TARGETS spconv
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}  # If you also have a static library
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}  # If you have executables
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 # Install the header files
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-
-
 
 # Export the targets
 install(EXPORT spconvTargets
