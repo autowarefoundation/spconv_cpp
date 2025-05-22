@@ -17,6 +17,9 @@ bool CompileInfo::arch_is_compiled(std::tuple<int, int> arch)   {
   if (arch == std::make_tuple(8, 9)){
       return true;
   }
+  if (arch == std::make_tuple(12, 0)){
+    return true;
+  }
   return false;
 }
 } // namespace common

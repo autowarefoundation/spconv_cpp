@@ -15,6 +15,7 @@ target_compile_options(spconvlib_spconv_csrc_sparse_all_ops_cpu4d_p2v_c_Point2Vo
     -gencode=arch=compute_80,code=sm_80
     -gencode=arch=compute_86,code=sm_86
     -gencode=arch=compute_89,code=sm_89
+    -gencode=arch=compute_120,code=sm_120
     -Xcudafe "--diag_suppress=implicit_return_from_non_void_function"
     --expt-relaxed-constexpr
     -Xcompiler="-fPIC"

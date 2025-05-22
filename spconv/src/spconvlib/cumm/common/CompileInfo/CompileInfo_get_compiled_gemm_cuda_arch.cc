@@ -9,6 +9,7 @@ std::vector<std::tuple<int, int>> CompileInfo::get_compiled_gemm_cuda_arch()   {
   res.push_back(std::make_tuple(8, 0));
   res.push_back(std::make_tuple(8, 6));
   res.push_back(std::make_tuple(8, 9));
+  res.push_back(std::make_tuple(12, 0));
   return res;
 }
 } // namespace common

@@ -7,10 +7,10 @@ In what follows, we present the basic steps needed:
 *Additional changes were needed for the creation of deb packages
 
 ```bash
-export CUMM_CUDA_VERSION=12.3
+export CUMM_CUDA_VERSION=12.8
 export CUMM_DISABLE_JIT=1
 export SPCONV_DISABLE_JIT=1
-export CUMM_CUDA_ARCH_LIST="7.5 8.0 8.6 8.9"
+export CUMM_CUDA_ARCH_LIST="7.5 8.0 8.6 8.9 12.0"
 
 git clone https://github.com/traveller59/spconv.git && git clone https://github.com/FindDefinition/cumm
 pip install pccm
