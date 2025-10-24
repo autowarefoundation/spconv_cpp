@@ -14,7 +14,10 @@ target_compile_options(spconvlib_cumm_conv_main_Turing_f16f16f16f16f16tnt_m64n64
     -gencode=arch=compute_75,code=sm_75
     -gencode=arch=compute_80,code=sm_80
     -gencode=arch=compute_86,code=sm_86
+    -gencode=arch=compute_87,code=sm_87
     -gencode=arch=compute_89,code=sm_89
+    -gencode=arch=compute_90,code=sm_90
+    -gencode=arch=compute_100,code=sm_100
     -gencode=arch=compute_120,code=sm_120
     -Xcudafe "--diag_suppress=implicit_return_from_non_void_function"
     --expt-relaxed-constexpr
