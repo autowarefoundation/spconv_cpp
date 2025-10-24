@@ -6,11 +6,13 @@ In what follows, we present the basic steps needed:
 
 *Additional changes were needed for the creation of deb packages
 
+Note: CUDA Toolkit 13.0 renamed the SM101 for Thor GPUs to SM110.
+
 ```bash
 export CUMM_CUDA_VERSION=12.8
 export CUMM_DISABLE_JIT=1
 export SPCONV_DISABLE_JIT=1
-export CUMM_CUDA_ARCH_LIST="7.5 8.0 8.6 8.7 8.9 9.0 10.0 11.0 12.0"
+export CUMM_CUDA_ARCH_LIST="7.5 8.0 8.6 8.7 8.9 9.0 10.0 10.1 12.0"
 
 git clone https://github.com/traveller59/spconv.git && git clone https://github.com/FindDefinition/cumm
 pip install pccm

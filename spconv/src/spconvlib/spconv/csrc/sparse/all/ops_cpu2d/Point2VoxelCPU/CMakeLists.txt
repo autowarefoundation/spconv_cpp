@@ -18,6 +18,7 @@ target_compile_options(spconvlib_spconv_csrc_sparse_all_ops_cpu2d_Point2VoxelCPU
     -gencode=arch=compute_89,code=sm_89
     -gencode=arch=compute_90,code=sm_90
     -gencode=arch=compute_100,code=sm_100
+    -gencode=arch=compute_101,code=sm_101
     -gencode=arch=compute_120,code=sm_120
     -Xcudafe "--diag_suppress=implicit_return_from_non_void_function"
     --expt-relaxed-constexpr
