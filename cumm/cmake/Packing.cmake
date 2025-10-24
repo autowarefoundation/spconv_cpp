@@ -22,6 +22,15 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Kenzo Lobos-Tsunekawa")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 
+# Detect architecture for cross-compilation
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "arm64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
+else()
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+endif()
+
 # package name for deb. If set, then instead of some-application-0.9.2-Linux.deb
 # you'll get some-application_0.9.2_amd64.deb (note the underscores too)
 set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
