@@ -6,8 +6,8 @@ This repository is a pre-generated version of the [spconv](https://github.com/tr
 The versions used to generate this code are:
  - cumm: 0.5.3
  - spconv: 2.3.8
- - CUDA: 12.3
- - architecture list: 7.5 8.0 8.6 8.9
+ - CUDA: 12.8
+ - architecture list: 7.5 8.0 8.6 8.7 8.9 9.0 10.0 11.0 12.0
 
 # Compilation and package generation
 
