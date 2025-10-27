@@ -31,15 +31,40 @@ cd ../../ && sudo apt-get install ./spconv/_packages/spconv_2.3.8_amd64.deb
 
 ## Cross compilation for ARM64
 
+### SBSA
+
 ```bash
 # Install cross compilation tools
 sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
+# Install CUDA cross compilation toolkit
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/cross-linux-sbsa/cuda-keyring_1.1-1_all.deb
+sudo dpkg -i cuda-keyring_1.1-1_all.deb
+sudo apt-get update && sudo apt-get install cuda-cross-sbsa=12.8.1-1
+
 # cumm
-mkdir -p cumm/build-arm64 && cd cumm/build-arm64 && cmake .. -DCMAKE_TOOLCHAIN_FILE=../../extras/arm64-toolchain.cmake && make && cpack -G DEB
+mkdir -p cumm/build-arm64 && cd cumm/build-arm64 && cmake .. -DCMAKE_TOOLCHAIN_FILE=../../extras/arm64-toolchain.cmake && make && cpack -G DEB && cd ../..
 
 # spconv
-mkdir -p spconv/build-arm64 && cd spconv/build-arm64 && cmake .. -DCMAKE_TOOLCHAIN_FILE=../../extras/arm64-toolchain.cmake && make -j $(nproc) && cpack -G DEB
+mkdir -p spconv/build-arm64 && cd spconv/build-arm64 && cmake .. -DCMAKE_TOOLCHAIN_FILE=../../extras/arm64-toolchain.cmake && make -j $(nproc) && cpack -G DEB && cd ../..
+```
+
+### Jetson
+
+```bash
+# Install cross compilation tools
+sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+# Install CUDA cross compilation toolkit
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/cross-linux-aarch64/cuda-keyring_1.1-1_all.deb
+sudo dpkg -i cuda-keyring_1.1-1_all.deb
+sudo apt-get update && sudo apt-get install cuda-cross-aarch64=12.8.1-1
+
+# cumm
+mkdir -p cumm/build-arm64 && cd cumm/build-arm64 && cmake .. -DCMAKE_TOOLCHAIN_FILE=../../extras/arm64-toolchain.cmake -DARM64_CUDA_TARGET=aarch64-linux && make && cpack -G DEB && cd ../..
+
+# spconv
+mkdir -p spconv/build-arm64 && cd spconv/build-arm64 && cmake .. -DCMAKE_TOOLCHAIN_FILE=../../extras/arm64-toolchain.cmake -DARM64_CUDA_TARGET=aarch64-linux && make -j $(nproc) && cpack -G DEB && cd ../..
 ```
 
 # License
