@@ -9,8 +9,7 @@ set_target_properties( spconvlib_spconv_csrc_sparse_convops_ConvTuneResult PROPE
 
 target_include_directories(spconvlib_spconv_csrc_sparse_convops_ConvTuneResult PRIVATE
     /usr/local/cuda/include)
-target_compile_options(spconvlib_spconv_csrc_sparse_convops_ConvTuneResult PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
-     -DTV_CUDA
+set(GENCODE_FLAGS 
     -gencode=arch=compute_75,code=sm_75
     -gencode=arch=compute_80,code=sm_80
     -gencode=arch=compute_86,code=sm_86
@@ -18,8 +17,18 @@ target_compile_options(spconvlib_spconv_csrc_sparse_convops_ConvTuneResult PRIVA
     -gencode=arch=compute_89,code=sm_89
     -gencode=arch=compute_90,code=sm_90
     -gencode=arch=compute_100,code=sm_100
-    -gencode=arch=compute_110,code=sm_110
     -gencode=arch=compute_120,code=sm_120
+)
+
+if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS "13.0")
+    list(APPEND GENCODE_FLAGS -gencode=arch=compute_101,code=sm_101)
+else()  # CUDA 13.0 renamed SM101 to SM110
+    list(APPEND GENCODE_FLAGS -gencode=arch=compute_110,code=sm_110)
+endif()
+
+target_compile_options(spconvlib_spconv_csrc_sparse_convops_ConvTuneResult PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
+     -DTV_CUDA
+    ${GENCODE_FLAGS}
     -Xcudafe "--diag_suppress=implicit_return_from_non_void_function"
     --expt-relaxed-constexpr
     -Xcompiler="-fPIC"
