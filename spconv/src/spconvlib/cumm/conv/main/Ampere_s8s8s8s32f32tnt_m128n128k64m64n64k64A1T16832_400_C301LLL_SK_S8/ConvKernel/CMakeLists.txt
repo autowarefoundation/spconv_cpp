@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.20)
 add_library(spconvlib_cumm_conv_main_Ampere_s8s8s8s32f32tnt_m128n128k64m64n64k64A1T16832_400_C301LLL_SK_S8_ConvKernel OBJECT ConvKernel_conv_kernel.cu)
 # set_target_properties(spconvlib_cumm_conv_main_Ampere_s8s8s8s32f32tnt_m128n128k64m64n64k64A1T16832_400_C301LLL_SK_S8_ConvKernel PROPERTIES POSITION_INDEPENDENT_CODE ON)
-set_target_properties( spconvlib_cumm_conv_main_Ampere_s8s8s8s32f32tnt_m128n128k64m64n64k64A1T16832_400_C301LLL_SK_S8_ConvKernel PROPERTIES CXX_STANDARD 14 CUDA_STANDARD 14)
+set_target_properties( spconvlib_cumm_conv_main_Ampere_s8s8s8s32f32tnt_m128n128k64m64n64k64A1T16832_400_C301LLL_SK_S8_ConvKernel PROPERTIES CXX_STANDARD 17 CUDA_STANDARD 17)
 
 # set_target_properties(spconvlib_cumm_conv_main_Ampere_s8s8s8s32f32tnt_m128n128k64m64n64k64A1T16832_400_C301LLL_SK_S8_ConvKernel PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 # set_target_properties(spconvlib_cumm_conv_main_Ampere_s8s8s8s32f32tnt_m128n128k64m64n64k64A1T16832_400_C301LLL_SK_S8_ConvKernel PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
@@ -18,7 +18,7 @@ target_compile_options(spconvlib_cumm_conv_main_Ampere_s8s8s8s32f32tnt_m128n128k
     -gencode=arch=compute_89,code=sm_89
     -gencode=arch=compute_90,code=sm_90
     -gencode=arch=compute_100,code=sm_100
-    -gencode=arch=compute_101,code=sm_101
+    -gencode=arch=compute_110,code=sm_110
     -gencode=arch=compute_120,code=sm_120
     -Xcudafe "--diag_suppress=implicit_return_from_non_void_function"
     --expt-relaxed-constexpr

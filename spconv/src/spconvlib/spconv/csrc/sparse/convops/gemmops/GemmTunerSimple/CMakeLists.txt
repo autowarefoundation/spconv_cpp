@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.20)
 add_library(spconvlib_spconv_csrc_sparse_convops_gemmops_GemmTunerSimple OBJECT GemmTunerSimple_GemmTunerSimple.cc GemmTunerSimple_get_available_algo_str_from_arch.cc GemmTunerSimple_get_all_available.cc GemmTunerSimple_extract_mnk.cc GemmTunerSimple_extract_mnk_vector.cc GemmTunerSimple_cached_get_nvrtc_params.cc GemmTunerSimple_tune_and_cache.cc GemmTunerSimple_get_tuned_algo.cc GemmTunerSimple_run_with_tuned_result.cc)
 # set_target_properties(spconvlib_spconv_csrc_sparse_convops_gemmops_GemmTunerSimple PROPERTIES POSITION_INDEPENDENT_CODE ON)
-set_target_properties( spconvlib_spconv_csrc_sparse_convops_gemmops_GemmTunerSimple PROPERTIES CXX_STANDARD 14 CUDA_STANDARD 14)
+set_target_properties( spconvlib_spconv_csrc_sparse_convops_gemmops_GemmTunerSimple PROPERTIES CXX_STANDARD 17 CUDA_STANDARD 17)
 
 # set_target_properties(spconvlib_spconv_csrc_sparse_convops_gemmops_GemmTunerSimple PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 # set_target_properties(spconvlib_spconv_csrc_sparse_convops_gemmops_GemmTunerSimple PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
@@ -18,7 +18,7 @@ target_compile_options(spconvlib_spconv_csrc_sparse_convops_gemmops_GemmTunerSim
     -gencode=arch=compute_89,code=sm_89
     -gencode=arch=compute_90,code=sm_90
     -gencode=arch=compute_100,code=sm_100
-    -gencode=arch=compute_101,code=sm_101
+    -gencode=arch=compute_110,code=sm_110
     -gencode=arch=compute_120,code=sm_120
     -Xcudafe "--diag_suppress=implicit_return_from_non_void_function"
     --expt-relaxed-constexpr

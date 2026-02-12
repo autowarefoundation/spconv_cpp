@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.20)
 add_library(spconvlib_spconv_csrc_sparse_convops_SimpleExternalSpconvMatmul OBJECT SimpleExternalSpconvMatmul_SimpleExternalSpconvMatmul.cc SimpleExternalSpconvMatmul_dtor_pccm_destructorSimpleExternalSpconvMatmul.cc SimpleExternalSpconvMatmul_check_cublas_status.cc SimpleExternalSpconvMatmul_tv_dtype_to_blaslt.cc SimpleExternalSpconvMatmul_matmul_colmajor.cc SimpleExternalSpconvMatmul_matmul.cc SimpleExternalSpconvMatmul_indice_conv_init_gemm.cc)
 # set_target_properties(spconvlib_spconv_csrc_sparse_convops_SimpleExternalSpconvMatmul PROPERTIES POSITION_INDEPENDENT_CODE ON)
-set_target_properties( spconvlib_spconv_csrc_sparse_convops_SimpleExternalSpconvMatmul PROPERTIES CXX_STANDARD 14 CUDA_STANDARD 14)
+set_target_properties( spconvlib_spconv_csrc_sparse_convops_SimpleExternalSpconvMatmul PROPERTIES CXX_STANDARD 17 CUDA_STANDARD 17)
 
 # set_target_properties(spconvlib_spconv_csrc_sparse_convops_SimpleExternalSpconvMatmul PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 # set_target_properties(spconvlib_spconv_csrc_sparse_convops_SimpleExternalSpconvMatmul PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
@@ -18,7 +18,7 @@ target_compile_options(spconvlib_spconv_csrc_sparse_convops_SimpleExternalSpconv
     -gencode=arch=compute_89,code=sm_89
     -gencode=arch=compute_90,code=sm_90
     -gencode=arch=compute_100,code=sm_100
-    -gencode=arch=compute_101,code=sm_101
+    -gencode=arch=compute_110,code=sm_110
     -gencode=arch=compute_120,code=sm_120
     -Xcudafe "--diag_suppress=implicit_return_from_non_void_function"
     --expt-relaxed-constexpr

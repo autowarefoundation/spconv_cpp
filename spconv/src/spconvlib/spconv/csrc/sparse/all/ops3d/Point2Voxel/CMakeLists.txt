@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.20)
 add_library(spconvlib_spconv_csrc_sparse_all_ops3d_Point2Voxel OBJECT Point2Voxel_get_grid_size.cc Point2Voxel_Point2Voxel.cc Point2Voxel_point_to_voxel_hash.cu Point2Voxel_point_to_voxel_hash_static.cu)
 # set_target_properties(spconvlib_spconv_csrc_sparse_all_ops3d_Point2Voxel PROPERTIES POSITION_INDEPENDENT_CODE ON)
-set_target_properties( spconvlib_spconv_csrc_sparse_all_ops3d_Point2Voxel PROPERTIES CXX_STANDARD 14 CUDA_STANDARD 14)
+set_target_properties( spconvlib_spconv_csrc_sparse_all_ops3d_Point2Voxel PROPERTIES CXX_STANDARD 17 CUDA_STANDARD 17)
 
 # set_target_properties(spconvlib_spconv_csrc_sparse_all_ops3d_Point2Voxel PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 # set_target_properties(spconvlib_spconv_csrc_sparse_all_ops3d_Point2Voxel PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
@@ -18,7 +18,7 @@ target_compile_options(spconvlib_spconv_csrc_sparse_all_ops3d_Point2Voxel PRIVAT
     -gencode=arch=compute_89,code=sm_89
     -gencode=arch=compute_90,code=sm_90
     -gencode=arch=compute_100,code=sm_100
-    -gencode=arch=compute_101,code=sm_101
+    -gencode=arch=compute_110,code=sm_110
     -gencode=arch=compute_120,code=sm_120
     -Xcudafe "--diag_suppress=implicit_return_from_non_void_function"
     --expt-relaxed-constexpr
