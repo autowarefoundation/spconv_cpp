@@ -19,6 +19,7 @@
 #include <cstdio>
 #endif
 #include "const_string.h"
+#include <cstdint>
 namespace tv {
 
 namespace detail {
