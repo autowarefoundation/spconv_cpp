@@ -25,12 +25,7 @@ set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 # Detect architecture for cross-compilation
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
     set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "arm64")
-    # Custom suffix for filename differentiation
-    if(ARM64_CUDA_TARGET STREQUAL "aarch64-linux")
-      set(ARCH_SUFFIX "arm64-jetson")
-    else()
-      set(ARCH_SUFFIX "arm64-sbsa")
-    endif()
+    set(ARCH_SUFFIX "arm64")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
     set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
     set(ARCH_SUFFIX "amd64")
