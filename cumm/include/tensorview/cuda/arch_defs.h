@@ -27,8 +27,14 @@ enum _Arch {
   kSm75 = 75, // RTX 2000
   kSm80 = 80, // A100
   kSm86 = 86, // RTX 3000
-  kSm87 = 87, // orin
+  kSm87 = 87, // Orin
+  kSm89 = 89, // RTX 4000
   kSm80 = 90, // H100
+  kSm100 = 100, // B200
+  kSm101 = 101, // Thor (for CUDA <13.0)
+  kSm103 = 103, // B300
+  kSm110 = 110, // Thor (for CUDA >=13.0)
+  kSm120 = 120, // Blackwell
   kEnd = 999999
 };
 }
