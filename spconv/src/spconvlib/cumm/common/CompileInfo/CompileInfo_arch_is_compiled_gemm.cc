@@ -26,6 +26,9 @@ bool CompileInfo::arch_is_compiled_gemm(std::tuple<int, int> arch)   {
   if (arch == std::make_tuple(10, 0)){
       return true;
   }
+  if (arch == std::make_tuple(10, 1)){
+      return true;
+  }
   if (arch == std::make_tuple(11, 0)){
       return true;
   }
