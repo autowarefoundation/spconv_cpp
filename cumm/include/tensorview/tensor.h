@@ -170,16 +170,9 @@ struct is_convertible<T, __nv_bfloat16>: std::is_floating_point<T> {};
 template <typename T> class TensorStorage {
   friend Tensor;
 public:
-#ifdef TV_CUDA
-  TensorStorage(size_t size, int device = -1, bool managed = false,
-                bool pinned = false, cudaStream_t stream = nullptr)
-      : size_(size), device_(device), managed_(managed), pinned_(pinned),
-        stream_(stream) {
-#else
   TensorStorage(size_t size, int device = -1, bool managed = false,
                 bool pinned = false)
       : size_(size), device_(device), managed_(managed), pinned_(pinned) {
-#endif
     if (size == 0) {
       ptr_ = nullptr;
     } else {
@@ -198,7 +191,7 @@ public:
         if (managed) {
           checkCudaErrors(cudaMallocManaged(&this->ptr_, size * sizeof(T)));
         } else {
-          checkCudaErrors(cudaMallocAsync(&ptr_, size * sizeof(T), stream_));
+          checkCudaErrors(cudaMalloc(&ptr_, size * sizeof(T)));
         }
 #else
         TV_THROW_INVALID_ARG("don't compiled with cuda");
@@ -230,7 +223,7 @@ public:
       }
     } else {
 #ifdef TV_CUDA
-      cudaFreeAsync(ptr_, stream_);
+      cudaFree(ptr_);
 #endif
     }
   };
@@ -359,9 +352,6 @@ private:
   int device_ = -1;
   bool managed_ = false;
   bool pinned_ = false;
-#ifdef TV_CUDA
-  cudaStream_t stream_ = nullptr;
-#endif
 };
 
 template <typename T> size_t sizeof_dtype(T dtype) {
@@ -660,34 +650,10 @@ using TensorShape = ShapeBase<kTensorMaxDim, int64_t>;
 struct Tensor {
   // empty tensor will have float32 dtype by default.
   Tensor(): dtype_(tv::float32) {}
-#ifdef TV_CUDA
-  Tensor(TensorShape shape, TensorShape stride, DType dtype, int device = -1,
-         bool pinned = false, bool managed = false,
-         cudaStream_t stream = nullptr)
-      : dtype_(dtype) {
-    // TV_ASSERT_INVALID_ARG(!shape.empty(), "dont support empty shape");
-    storage_ = std::make_shared<detail::TensorStorage<uint8_t>>(
-        shape.size() * detail::sizeof_dtype(dtype), device, managed, pinned, stream);
-    shape_ = shape;
-    stride_ = stride;
-    contiguous_ = compute_is_contiguous();
-    TV_ASSERT_RT_ERR(contiguous_, "stride must be contiguous when you create tensor from shape");
-  }
-
-  Tensor(TensorShape shape, DType dtype, int device = -1, bool pinned = false,
-         bool managed = false, cudaStream_t stream = nullptr)
-      : dtype_(dtype) {
-    // TV_ASSERT_INVALID_ARG(!shape.empty(), "dont support empty shape");
-    storage_ = std::make_shared<detail::TensorStorage<uint8_t>>(
-        shape.size() * detail::sizeof_dtype(dtype), device, managed, pinned, stream);
-    shape_ = shape;
-    stride_ = shape.stride_rowmajor();
-    contiguous_ = compute_is_contiguous();
-  }
-#else
   Tensor(TensorShape shape, TensorShape stride, DType dtype, int device = -1,
          bool pinned = false, bool managed = false)
       : dtype_(dtype) {
+
     // TV_ASSERT_INVALID_ARG(!shape.empty(), "dont support empty shape");
     storage_ = std::make_shared<detail::TensorStorage<uint8_t>>(
         shape.size() * detail::sizeof_dtype(dtype), device, managed, pinned);
@@ -707,7 +673,7 @@ struct Tensor {
     stride_ = shape.stride_rowmajor();
     contiguous_ = compute_is_contiguous();
   }
-#endif
+
   Tensor(void *ptr, TensorShape shape, TensorShape stride, DType dtype,
          int device = -1)
       : dtype_(dtype) {
