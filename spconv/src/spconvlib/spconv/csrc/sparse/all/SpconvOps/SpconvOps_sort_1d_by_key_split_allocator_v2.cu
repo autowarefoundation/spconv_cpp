@@ -14,6 +14,11 @@
                 inp[i] &= mask;
             }
         }
+        template <typename T> __global__ void gather_kernel(const T* src, const int32_t* indices, T* dst, int size){
+            for (int i : tv::KernelLoopX<int>(size)){
+                dst[i] = src[indices[i]];
+            }
+        }
 
 namespace spconvlib {
 namespace spconv {
@@ -75,12 +80,13 @@ void cub_sort_pairs_masked(KeyT* keys, int32_t* values, int num_items,
       static_cast<const int32_t*>(nullptr), static_cast<int32_t*>(nullptr),
       num_items, 0, sizeof(KeyT) * 8, stream));
 
-  // Allocate workspace: temp_storage + masked_keys + alt_keys + alt_values (aligned)
+  // Allocate workspace: temp_storage + masked_keys + alt_keys + alt_values + gather_tmp (aligned)
   size_t temp_aligned = align_up(temp_bytes, kAlignment);
   size_t key_bytes = static_cast<size_t>(num_items) * sizeof(KeyT);
   size_t key_aligned = align_up(key_bytes, kAlignment);
   size_t val_bytes = static_cast<size_t>(num_items) * sizeof(int32_t);
-  size_t total_bytes = temp_aligned + key_aligned + key_aligned + val_bytes;
+  size_t val_aligned = align_up(val_bytes, kAlignment);
+  size_t total_bytes = temp_aligned + key_aligned + key_aligned + val_aligned + key_bytes;
   char* workspace = allocator.allocate(total_bytes);
 
   void* d_temp = workspace;
@@ -88,6 +94,8 @@ void cub_sort_pairs_masked(KeyT* keys, int32_t* values, int num_items,
   KeyT* alt_keys = reinterpret_cast<KeyT*>(workspace + temp_aligned + key_aligned);
   int32_t* alt_values = reinterpret_cast<int32_t*>(
       workspace + temp_aligned + key_aligned + key_aligned);
+  KeyT* gather_tmp = reinterpret_cast<KeyT*>(
+      workspace + temp_aligned + key_aligned + key_aligned + val_aligned);
 
   // Apply mask to create sort keys
   tv::cuda::Launch launcher(num_items, stream);
@@ -101,15 +109,21 @@ void cub_sort_pairs_masked(KeyT* keys, int32_t* values, int num_items,
       d_temp, temp_bytes, d_keys, d_values,
       num_items, 0, sizeof(KeyT) * 8, stream));
 
-  // Copy values back if result ended up in alt buffer
+  // Copy values (indices) back if result ended up in alt buffer
   if (d_values.Current() != values) {
     TV_CUDA_CHECK(cudaMemcpyAsync(values, d_values.Current(),
         static_cast<size_t>(num_items) * sizeof(int32_t), cudaMemcpyDeviceToDevice, stream));
   }
 
+  // Gather data into sorted order to match old Thrust behavior
+  // (Thrust sort_by_key reorders both keys and values in-place)
+  launcher(gather_kernel<KeyT>, keys, values, gather_tmp, num_items);
+  TV_CUDA_CHECK(cudaMemcpyAsync(keys, gather_tmp,
+      static_cast<size_t>(num_items) * sizeof(KeyT), cudaMemcpyDeviceToDevice, stream));
+
   allocator.deallocate(workspace, total_bytes);
 
-  // Optionally mask the original data
+  // Optionally mask the original data (applied after reorder, matching old behavior)
   if (do_mask_output) {
     launcher(mask_input<KeyT>, keys, mask_val, num_items);
   }
