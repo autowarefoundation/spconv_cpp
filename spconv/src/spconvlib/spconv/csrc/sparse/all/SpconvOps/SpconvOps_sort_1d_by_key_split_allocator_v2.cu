@@ -41,6 +41,22 @@ using TensorViewKernel = spconvlib::cumm::common::TensorViewKernel;
 
 namespace {
 
+#define TV_CUB_CHECK(expr) \
+  do { \
+    cudaError_t __err = (expr); \
+    if (__err != cudaSuccess) { \
+      TV_THROW_RT_ERR("CUB error: ", cudaGetErrorString(__err)); \
+    } \
+  } while (0)
+
+#define TV_CUDA_CHECK(expr) \
+  do { \
+    cudaError_t __err = (expr); \
+    if (__err != cudaSuccess) { \
+      TV_THROW_RT_ERR("CUDA error: ", cudaGetErrorString(__err)); \
+    } \
+  } while (0)
+
 constexpr size_t kAlignment = 256;
 
 inline size_t align_up(size_t n, size_t alignment) {
@@ -53,11 +69,11 @@ void cub_sort_pairs_masked(KeyT* keys, int32_t* values, int num_items,
                            ThrustAllocator& allocator, cudaStream_t stream) {
   // Query temp storage size
   size_t temp_bytes = 0;
-  cub::DeviceRadixSort::SortPairs(
+  TV_CUB_CHECK(cub::DeviceRadixSort::SortPairs(
       nullptr, temp_bytes,
       static_cast<const KeyT*>(nullptr), static_cast<KeyT*>(nullptr),
       static_cast<const int32_t*>(nullptr), static_cast<int32_t*>(nullptr),
-      num_items, 0, sizeof(KeyT) * 8, stream);
+      num_items, 0, sizeof(KeyT) * 8, stream));
 
   // Allocate workspace: temp_storage + masked_keys + alt_keys + alt_values (aligned)
   size_t temp_aligned = align_up(temp_bytes, kAlignment);
@@ -81,14 +97,14 @@ void cub_sort_pairs_masked(KeyT* keys, int32_t* values, int num_items,
   cub::DoubleBuffer<KeyT> d_keys(masked_keys, alt_keys);
   cub::DoubleBuffer<int32_t> d_values(values, alt_values);
 
-  cub::DeviceRadixSort::SortPairs(
+  TV_CUB_CHECK(cub::DeviceRadixSort::SortPairs(
       d_temp, temp_bytes, d_keys, d_values,
-      num_items, 0, sizeof(KeyT) * 8, stream);
+      num_items, 0, sizeof(KeyT) * 8, stream));
 
   // Copy values back if result ended up in alt buffer
   if (d_values.Current() != values) {
-    cudaMemcpyAsync(values, d_values.Current(),
-        num_items * sizeof(int32_t), cudaMemcpyDeviceToDevice, stream);
+    TV_CUDA_CHECK(cudaMemcpyAsync(values, d_values.Current(),
+        static_cast<size_t>(num_items) * sizeof(int32_t), cudaMemcpyDeviceToDevice, stream));
   }
 
   allocator.deallocate(workspace, total_bytes);
