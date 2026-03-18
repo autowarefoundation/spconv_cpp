@@ -102,8 +102,9 @@ void cub_sort_pairs_masked(KeyT* keys, int32_t* values, int num_items,
 }  // namespace
 
 tv::Tensor SpconvOps::sort_1d_by_key_split_allocator_v2(tv::Tensor data, ThrustAllocator& allocator, tv::Tensor mask, tv::Tensor indices, std::uintptr_t stream, bool mask_output)   {
-
+  
   cudaStream_t stream_cu = reinterpret_cast<cudaStream_t>(stream);
+  // auto timer = tv::CudaContextTimer<>();
   if (indices.empty()){
       indices = tv::empty({data.dim(0)}, tv::int32, 0);
   }
@@ -120,7 +121,7 @@ tv::Tensor SpconvOps::sort_1d_by_key_split_allocator_v2(tv::Tensor data, ThrustA
                             num_items, mask_val, mask_output,
                             allocator, stream_cu);
   });
-
+  // tv::ssprint("SORT_BY_KEY_MASKED", timer.report() / 1000.0);
   return indices;
 }
 } // namespace all
