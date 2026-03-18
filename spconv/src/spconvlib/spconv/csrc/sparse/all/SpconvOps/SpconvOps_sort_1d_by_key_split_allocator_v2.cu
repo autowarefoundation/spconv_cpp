@@ -39,8 +39,6 @@ using Point2Voxel4D = spconvlib::spconv::csrc::sparse::all::ops4d::Point2Voxel;
 using CustomThrustLib = spconvlib::spconv::csrc::sparse::all::CustomThrustLib;
 using TensorViewKernel = spconvlib::cumm::common::TensorViewKernel;
 
-namespace {
-
 #define TV_CUB_CHECK(expr) \
   do { \
     cudaError_t __err = (expr); \
@@ -56,6 +54,8 @@ namespace {
       TV_THROW_RT_ERR("CUDA error: ", cudaGetErrorString(__err)); \
     } \
   } while (0)
+
+namespace {
 
 constexpr size_t kAlignment = 256;
 

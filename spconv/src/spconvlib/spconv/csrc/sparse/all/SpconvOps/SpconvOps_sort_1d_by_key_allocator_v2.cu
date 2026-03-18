@@ -27,8 +27,6 @@ using Point2Voxel4D = spconvlib::spconv::csrc::sparse::all::ops4d::Point2Voxel;
 using CustomThrustLib = spconvlib::spconv::csrc::sparse::all::CustomThrustLib;
 using TensorViewKernel = spconvlib::cumm::common::TensorViewKernel;
 
-namespace {
-
 #define TV_CUB_CHECK(expr) \
   do { \
     cudaError_t __err = (expr); \
@@ -44,6 +42,8 @@ namespace {
       TV_THROW_RT_ERR("CUDA error: ", cudaGetErrorString(__err)); \
     } \
   } while (0)
+
+namespace {
 
 constexpr size_t kAlignment = 256;
 
@@ -98,7 +98,6 @@ void cub_sort_pairs(KeyT* keys, int32_t* values, int num_items,
 }  // namespace
 
 tv::Tensor SpconvOps::sort_1d_by_key_allocator_v2(tv::Tensor data, ThrustAllocator& allocator, tv::Tensor indices, std::uintptr_t stream, int mask_count, bool do_sort)   {
-
   cudaStream_t stream_cu = reinterpret_cast<cudaStream_t>(stream);
   if (indices.empty()){
       indices = tv::empty({data.dim(0)}, tv::int32, 0);
@@ -108,6 +107,7 @@ tv::Tensor SpconvOps::sort_1d_by_key_allocator_v2(tv::Tensor data, ThrustAllocat
   if (!do_sort){
       return indices;
   }
+  // auto timer = tv::CUDATimer();
 
   int num_items = data.dim(0);
 
@@ -183,7 +183,7 @@ tv::Tensor SpconvOps::sort_1d_by_key_allocator_v2(tv::Tensor data, ThrustAllocat
       TV_THROW_RT_ERR("unknown dtype data.dtype(), available: [int32_t, int64_t, uint32_t, uint64_t]")
     }
   }
-
+  // tv::ssprint("SORT BY KEY TIME", data.dim(0), timer.report() / 1000.0);
   return indices;
 }
 } // namespace all
