@@ -653,7 +653,7 @@ struct Tensor {
   Tensor(TensorShape shape, TensorShape stride, DType dtype, int device = -1,
          bool pinned = false, bool managed = false)
       : dtype_(dtype) {
-
+    
     // TV_ASSERT_INVALID_ARG(!shape.empty(), "dont support empty shape");
     storage_ = std::make_shared<detail::TensorStorage<uint8_t>>(
         shape.size() * detail::sizeof_dtype(dtype), device, managed, pinned);
@@ -673,7 +673,6 @@ struct Tensor {
     stride_ = shape.stride_rowmajor();
     contiguous_ = compute_is_contiguous();
   }
-
   Tensor(void *ptr, TensorShape shape, TensorShape stride, DType dtype,
          int device = -1)
       : dtype_(dtype) {
