@@ -118,7 +118,6 @@ tv::Tensor SpconvOps::sort_1d_by_key_allocator_v2(tv::Tensor data, ThrustAllocat
   if (!do_sort){
       return indices;
   }
-  // auto timer = tv::CUDATimer();
 
   int num_items = data.dim(0);
 
@@ -142,7 +141,7 @@ tv::Tensor SpconvOps::sort_1d_by_key_allocator_v2(tv::Tensor data, ThrustAllocat
       });
     });
   }
-  // tv::ssprint("SORT BY KEY TIME", data.dim(0), timer.report() / 1000.0);
+
   return indices;
 }
 } // namespace all
