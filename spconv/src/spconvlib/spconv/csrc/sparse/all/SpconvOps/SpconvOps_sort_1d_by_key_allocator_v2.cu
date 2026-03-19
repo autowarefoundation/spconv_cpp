@@ -114,19 +114,23 @@ tv::Tensor SpconvOps::sort_1d_by_key_allocator_v2(tv::Tensor data, ThrustAllocat
   if (mask_count == 1) {
     // Use CUB radix sort (CUDA graph capture compatible)
     if (data.dtype() == tv::DType(1)){
-      cub_sort_pairs(data.data_ptr<int32_t>(), indices.data_ptr<int32_t>(),
+      using T_ = int32_t;
+      cub_sort_pairs(data.data_ptr<T_>(), indices.data_ptr<int32_t>(),
                      num_items, allocator, stream_cu);
     }
     else if (data.dtype() == tv::DType(8)){
-      cub_sort_pairs(data.data_ptr<int64_t>(), indices.data_ptr<int32_t>(),
+      using T_ = int64_t;
+      cub_sort_pairs(data.data_ptr<T_>(), indices.data_ptr<int32_t>(),
                      num_items, allocator, stream_cu);
     }
     else if (data.dtype() == tv::DType(10)){
-      cub_sort_pairs(data.data_ptr<uint32_t>(), indices.data_ptr<int32_t>(),
+      using T_ = uint32_t;
+      cub_sort_pairs(data.data_ptr<T_>(), indices.data_ptr<int32_t>(),
                      num_items, allocator, stream_cu);
     }
     else if (data.dtype() == tv::DType(11)){
-      cub_sort_pairs(data.data_ptr<uint64_t>(), indices.data_ptr<int32_t>(),
+      using T_ = uint64_t;
+      cub_sort_pairs(data.data_ptr<T_>(), indices.data_ptr<int32_t>(),
                      num_items, allocator, stream_cu);
     }
     else{
