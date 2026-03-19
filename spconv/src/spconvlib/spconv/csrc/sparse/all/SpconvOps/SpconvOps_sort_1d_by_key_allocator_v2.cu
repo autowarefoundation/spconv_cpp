@@ -95,6 +95,17 @@ void cub_sort_pairs(KeyT* keys, int32_t* values, int num_items,
   allocator.deallocate(workspace, total_bytes);
 }
 
+template <typename Func>
+void dispatch_dtype(tv::Tensor& data, Func&& func) {
+  if (data.dtype() == tv::DType(1))       { func(data.data_ptr<int32_t>()); }
+  else if (data.dtype() == tv::DType(8))  { func(data.data_ptr<int64_t>()); }
+  else if (data.dtype() == tv::DType(10)) { func(data.data_ptr<uint32_t>()); }
+  else if (data.dtype() == tv::DType(11)) { func(data.data_ptr<uint64_t>()); }
+  else {
+    TV_THROW_RT_ERR("unknown dtype, available: [int32_t, int64_t, uint32_t, uint64_t]");
+  }
+}
+
 }  // namespace
 
 tv::Tensor SpconvOps::sort_1d_by_key_allocator_v2(tv::Tensor data, ThrustAllocator& allocator, tv::Tensor indices, std::uintptr_t stream, int mask_count, bool do_sort)   {
@@ -113,79 +124,23 @@ tv::Tensor SpconvOps::sort_1d_by_key_allocator_v2(tv::Tensor data, ThrustAllocat
 
   if (mask_count == 1) {
     // Use CUB radix sort (CUDA graph capture compatible)
-    if (data.dtype() == tv::DType(1)){
-      using T_ = int32_t;
-      cub_sort_pairs(data.data_ptr<T_>(), indices.data_ptr<int32_t>(),
+    dispatch_dtype(data, [&](auto* keys) {
+      cub_sort_pairs(keys, indices.data_ptr<int32_t>(),
                      num_items, allocator, stream_cu);
-    }
-    else if (data.dtype() == tv::DType(8)){
-      using T_ = int64_t;
-      cub_sort_pairs(data.data_ptr<T_>(), indices.data_ptr<int32_t>(),
-                     num_items, allocator, stream_cu);
-    }
-    else if (data.dtype() == tv::DType(10)){
-      using T_ = uint32_t;
-      cub_sort_pairs(data.data_ptr<T_>(), indices.data_ptr<int32_t>(),
-                     num_items, allocator, stream_cu);
-    }
-    else if (data.dtype() == tv::DType(11)){
-      using T_ = uint64_t;
-      cub_sort_pairs(data.data_ptr<T_>(), indices.data_ptr<int32_t>(),
-                     num_items, allocator, stream_cu);
-    }
-    else{
-      TV_THROW_RT_ERR("unknown dtype data.dtype(), available: [int32_t, int64_t, uint32_t, uint64_t]")
-    }
-  }
-  else {
+    });
+  } else {
     // mask_count > 1: fall back to thrust (rare case for kernel_volume > 32)
-    if (data.dtype() == tv::DType(1)){
-      using T_ = int32_t;
+    dispatch_dtype(data, [&](auto* keys) {
+      using T_ = std::remove_pointer_t<decltype(keys)>;
       tv::dispatch_int<1, 2, 3, 4>(mask_count, [&](auto IV){
           constexpr int I = TV_DECLTYPE(IV)::value;
           using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust::tuple>;
-          thrust::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
+          thrust::device_ptr<T> ptr_tr(reinterpret_cast<T*>(keys));
           thrust::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
           auto ctx2 = thrust::cuda::par(allocator).on(stream_cu);
           thrust::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
       });
-    }
-    else if (data.dtype() == tv::DType(8)){
-      using T_ = int64_t;
-      tv::dispatch_int<1, 2, 3, 4>(mask_count, [&](auto IV){
-          constexpr int I = TV_DECLTYPE(IV)::value;
-          using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust::tuple>;
-          thrust::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
-          thrust::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
-          auto ctx2 = thrust::cuda::par(allocator).on(stream_cu);
-          thrust::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
-      });
-    }
-    else if (data.dtype() == tv::DType(10)){
-      using T_ = uint32_t;
-      tv::dispatch_int<1, 2, 3, 4>(mask_count, [&](auto IV){
-          constexpr int I = TV_DECLTYPE(IV)::value;
-          using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust::tuple>;
-          thrust::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
-          thrust::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
-          auto ctx2 = thrust::cuda::par(allocator).on(stream_cu);
-          thrust::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
-      });
-    }
-    else if (data.dtype() == tv::DType(11)){
-      using T_ = uint64_t;
-      tv::dispatch_int<1, 2, 3, 4>(mask_count, [&](auto IV){
-          constexpr int I = TV_DECLTYPE(IV)::value;
-          using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust::tuple>;
-          thrust::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
-          thrust::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
-          auto ctx2 = thrust::cuda::par(allocator).on(stream_cu);
-          thrust::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
-      });
-    }
-    else{
-      TV_THROW_RT_ERR("unknown dtype data.dtype(), available: [int32_t, int64_t, uint32_t, uint64_t]")
-    }
+    });
   }
   // tv::ssprint("SORT BY KEY TIME", data.dim(0), timer.report() / 1000.0);
   return indices;
