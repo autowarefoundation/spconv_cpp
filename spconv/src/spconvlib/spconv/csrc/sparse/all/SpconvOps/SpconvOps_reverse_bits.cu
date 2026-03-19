@@ -25,6 +25,9 @@
 
         int reverse(uint64_t i)
         {
+            TV_THROW_RT_ERR(
+                "reverse(uint64_t) is buggy (wrong return type 'int' and undefined 32-bit shift). "
+                "This function must not be called until it is fixed.");
             return (reverse(uint32_t(i)) << 32) | reverse(uint32_t(i >> 32));
         }
         
