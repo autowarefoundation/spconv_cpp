@@ -18,10 +18,10 @@ int SparseConvIndicesKernel::generate_conv_inds_stage1_5(tv::Tensor indice_pairs
   int num_out_act = 0;
   tv::dispatch<int32_t, int64_t>(indice_pairs_uniq.dtype(), [&](auto I){
       using T = TV_DECLTYPE(I);
-      thrust::device_ptr<T> ptr_tr(indice_pairs_uniq.data_ptr<T>());
-      auto thrust_ctx = thrust::cuda::par.on(reinterpret_cast<cudaStream_t>(stream_int));
-      thrust::sort(thrust_ctx, ptr_tr, ptr_tr + uniq_size);
-      auto new_end = thrust::unique(thrust_ctx, ptr_tr, ptr_tr + uniq_size);
+      thrust_replacement::device_ptr<T> ptr_tr(indice_pairs_uniq.data_ptr<T>());
+      auto thrust_ctx = thrust_replacement::cuda::par.on(reinterpret_cast<cudaStream_t>(stream_int));
+      thrust_replacement::sort(thrust_ctx, ptr_tr, ptr_tr + uniq_size);
+      auto new_end = thrust_replacement::unique(thrust_ctx, ptr_tr, ptr_tr + uniq_size);
       num_out_act = new_end - ptr_tr - 1;
   });
   return num_out_act;

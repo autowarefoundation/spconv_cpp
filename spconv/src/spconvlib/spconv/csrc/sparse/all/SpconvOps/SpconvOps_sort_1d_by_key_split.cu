@@ -51,10 +51,10 @@ tv::Tensor SpconvOps::sort_1d_by_key_split(tv::Tensor data, tv::Tensor mask, tv:
       using T = TV_DECLTYPE(I);
       auto masks_ptr = mask.data_ptr<T>();
       MaskedElementComp<T> op_comp{masks_ptr[0]};
-      thrust::device_ptr<T> ptr_tr(data.data_ptr<T>());
-      thrust::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
-      auto thrust_ctx = thrust::cuda::par.on(stream_cu);
-      thrust::sort_by_key(thrust_ctx, ptr_tr, ptr_tr + data.dim(0), ptr_k, op_comp);
+      thrust_replacement::device_ptr<T> ptr_tr(data.data_ptr<T>());
+      thrust_replacement::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
+      auto thrust_ctx = thrust_replacement::cuda::par.on(stream_cu);
+      thrust_replacement::sort_by_key(thrust_ctx, ptr_tr, ptr_tr + data.dim(0), ptr_k, op_comp);
       if (mask_output){
           launcher(mask_input<T>, data.data_ptr<T>(), masks_ptr[0], data.dim(0));
       }

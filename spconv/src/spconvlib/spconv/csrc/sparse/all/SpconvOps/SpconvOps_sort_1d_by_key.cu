@@ -57,10 +57,10 @@ tv::Tensor SpconvOps::sort_1d_by_key(tv::Tensor data, tv::Tensor indices, std::u
   auto timer = tv::CUDATimer();
   tv::dispatch<int32_t, uint32_t, int64_t, uint64_t>(data.dtype(), [&](auto I){
       using T = TV_DECLTYPE(I);
-      thrust::device_ptr<T> ptr_tr(data.data_ptr<T>());
-      thrust::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
-      auto thrust_ctx = thrust::cuda::par.on(stream_cu);
-      thrust::stable_sort_by_key(thrust_ctx, ptr_tr, ptr_tr + data.dim(0), ptr_k, SmallOrEqualTo<uint32_t>());
+      thrust_replacement::device_ptr<T> ptr_tr(data.data_ptr<T>());
+      thrust_replacement::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
+      auto thrust_ctx = thrust_replacement::cuda::par.on(stream_cu);
+      thrust_replacement::stable_sort_by_key(thrust_ctx, ptr_tr, ptr_tr + data.dim(0), ptr_k, SmallOrEqualTo<uint32_t>());
   });
   // tv::ssprint("SORT BY KEY TIME", data.dim(0), timer.report() / 1000.0);
   return indices;

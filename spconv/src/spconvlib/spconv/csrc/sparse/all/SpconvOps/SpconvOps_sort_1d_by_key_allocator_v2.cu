@@ -133,11 +133,11 @@ tv::Tensor SpconvOps::sort_1d_by_key_allocator_v2(tv::Tensor data, ThrustAllocat
       using T_ = std::remove_pointer_t<decltype(keys)>;
       tv::dispatch_int<1, 2, 3, 4>(mask_count, [&](auto IV){
           constexpr int I = TV_DECLTYPE(IV)::value;
-          using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust::tuple>;
-          thrust::device_ptr<T> ptr_tr(reinterpret_cast<T*>(keys));
-          thrust::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
-          auto ctx2 = thrust::cuda::par(allocator).on(stream_cu);
-          thrust::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
+          using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust_replacement::tuple>;
+          thrust_replacement::device_ptr<T> ptr_tr(reinterpret_cast<T*>(keys));
+          thrust_replacement::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
+          auto ctx2 = thrust_replacement::cuda::par(allocator).on(stream_cu);
+          thrust_replacement::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
       });
     });
   }

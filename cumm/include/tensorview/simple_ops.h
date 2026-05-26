@@ -14,9 +14,9 @@
 
 #pragma once
 #include <tensorview/tensor.h>
-#include <thrust/device_ptr.h>
-#include <thrust/reduce.h>
-#include <thrust/transform.h>
+#include <thrust_replacement/device_ptr.h>
+#include <thrust_replacement/reduce.h>
+#include <thrust_replacement/transform.h>
 
 namespace tv {
 
@@ -41,11 +41,11 @@ void transform(cudaStream_t stream, tv::Tensor out, tv::Tensor a,
   tv::Dispatch<all_t>()(a.dtype(), [&](auto TAValue) {
     using TA = decltype(TAValue);
     OpClass<TA> op;
-    thrust::device_ptr<TA> ptr_a(a.data_ptr<TA>());
-    thrust::device_ptr<TA> ptr_b(b.data_ptr<TA>());
-    thrust::device_ptr<TA> ptr_o(out.data_ptr<TA>());
-    auto ctx = thrust::cuda::par.on(stream);
-    thrust::transform(ctx, ptr_a, ptr_a + a.size(), ptr_b, ptr_o, op);
+    thrust_replacement::device_ptr<TA> ptr_a(a.data_ptr<TA>());
+    thrust_replacement::device_ptr<TA> ptr_b(b.data_ptr<TA>());
+    thrust_replacement::device_ptr<TA> ptr_o(out.data_ptr<TA>());
+    auto ctx = thrust_replacement::cuda::par.on(stream);
+    thrust_replacement::transform(ctx, ptr_a, ptr_a + a.size(), ptr_b, ptr_o, op);
   });
 }
 
@@ -64,10 +64,10 @@ void unary(cudaStream_t stream, tv::Tensor out, tv::Tensor a) {
   tv::Dispatch<all_t>()(a.dtype(), [&](auto TAValue) {
     using TA = decltype(TAValue);
     OpClass<TA> op;
-    thrust::device_ptr<TA> ptr_a(a.data_ptr<TA>());
-    thrust::device_ptr<TA> ptr_o(out.data_ptr<TA>());
-    auto ctx = thrust::cuda::par.on(stream);
-    thrust::transform(ctx, ptr_a, ptr_a + a.size(), ptr_o, op);
+    thrust_replacement::device_ptr<TA> ptr_a(a.data_ptr<TA>());
+    thrust_replacement::device_ptr<TA> ptr_o(out.data_ptr<TA>());
+    auto ctx = thrust_replacement::cuda::par.on(stream);
+    thrust_replacement::transform(ctx, ptr_a, ptr_a + a.size(), ptr_o, op);
   });
 }
 
@@ -79,9 +79,9 @@ tv::Tensor reduce(cudaStream_t stream, tv::Tensor a, tv::Tensor init) {
   tv::Dispatch<all_t>()(a.dtype(), [&](auto TAValue) {
     using TA = decltype(TAValue);
     OpClass<TA> op;
-    thrust::device_ptr<TA> ptr_a(a.data_ptr<TA>());
-    auto ctx = thrust::cuda::par.on(stream);
-    TA sum = thrust::reduce(ctx, ptr_a, ptr_a + a.size(), init.item<TA>(), op);
+    thrust_replacement::device_ptr<TA> ptr_a(a.data_ptr<TA>());
+    auto ctx = thrust_replacement::cuda::par.on(stream);
+    TA sum = thrust_replacement::reduce(ctx, ptr_a, ptr_a + a.size(), init.item<TA>(), op);
     *(res.data_ptr<TA>()) = sum;
   });
   return res;

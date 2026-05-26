@@ -2,101 +2,18 @@
 
 #include <cstddef>
 #include <iterator>
-#include <tuple>
+#include <thrust/device_ptr.h>
+#include <thrust/tuple.h>
 #include <type_traits>
 #include <utility>
 
-namespace thrust {
+namespace thrust_replacement {
 
 template <typename T>
-class device_ptr {
-public:
-  using element_type = T;
-  using value_type = T;
-  using difference_type = std::ptrdiff_t;
-  using pointer = T *;
-  using reference = T &;
-  using iterator_category = std::random_access_iterator_tag;
-
-  constexpr device_ptr() = default;
-  constexpr explicit device_ptr(T *ptr) : ptr_(ptr) {}
-
-  constexpr T *get() const { return ptr_; }
-  constexpr explicit operator bool() const { return ptr_ != nullptr; }
-  constexpr operator T *() const { return ptr_; }
-
-  constexpr reference operator*() const { return *ptr_; }
-  constexpr reference operator[](difference_type n) const { return ptr_[n]; }
-
-  constexpr device_ptr &operator++() {
-    ++ptr_;
-    return *this;
-  }
-
-  constexpr device_ptr operator++(int) {
-    device_ptr tmp(*this);
-    ++(*this);
-    return tmp;
-  }
-
-  constexpr device_ptr &operator--() {
-    --ptr_;
-    return *this;
-  }
-
-  constexpr device_ptr operator--(int) {
-    device_ptr tmp(*this);
-    --(*this);
-    return tmp;
-  }
-
-  constexpr device_ptr &operator+=(difference_type n) {
-    ptr_ += n;
-    return *this;
-  }
-
-  constexpr device_ptr &operator-=(difference_type n) {
-    ptr_ -= n;
-    return *this;
-  }
-
-  friend constexpr device_ptr operator+(device_ptr ptr, difference_type n) {
-    ptr += n;
-    return ptr;
-  }
-
-  friend constexpr device_ptr operator+(difference_type n, device_ptr ptr) {
-    ptr += n;
-    return ptr;
-  }
-
-  friend constexpr device_ptr operator-(device_ptr ptr, difference_type n) {
-    ptr -= n;
-    return ptr;
-  }
-
-  friend constexpr difference_type operator-(device_ptr lhs, device_ptr rhs) {
-    return lhs.ptr_ - rhs.ptr_;
-  }
-
-  friend constexpr bool operator==(device_ptr lhs, device_ptr rhs) {
-    return lhs.ptr_ == rhs.ptr_;
-  }
-
-  friend constexpr bool operator!=(device_ptr lhs, device_ptr rhs) {
-    return !(lhs == rhs);
-  }
-
-  friend constexpr bool operator<(device_ptr lhs, device_ptr rhs) {
-    return lhs.ptr_ < rhs.ptr_;
-  }
-
-private:
-  T *ptr_ = nullptr;
-};
+using device_ptr = ::thrust::device_ptr<T>;
 
 template <typename... Ts>
-using tuple = std::tuple<Ts...>;
+using tuple = ::thrust::tuple<Ts...>;
 
 template <typename T>
 class device_vector;
@@ -153,30 +70,20 @@ static constexpr par_t par{};
 template <typename Policy, typename InputIt1, typename InputIt2,
           typename OutputIt, typename BinaryOperation>
 OutputIt transform(const Policy &, InputIt1 first, InputIt1 last,
-                   InputIt2 first2, OutputIt result, BinaryOperation op) {
-  for (; first != last; ++first, ++first2, ++result) {
-    *result = op(*first, *first2);
-  }
-  return result;
+                   InputIt2, OutputIt result, BinaryOperation) {
+  return result + (last - first);
 }
 
 template <typename Policy, typename InputIt, typename OutputIt,
           typename UnaryOperation>
 OutputIt transform(const Policy &, InputIt first, InputIt last, OutputIt result,
-                   UnaryOperation op) {
-  for (; first != last; ++first, ++result) {
-    *result = op(*first);
-  }
-  return result;
+                   UnaryOperation) {
+  return result + (last - first);
 }
 
 template <typename Policy, typename InputIt, typename T,
           typename BinaryOperation>
-T reduce(const Policy &, InputIt first, InputIt last, T init,
-         BinaryOperation op) {
-  for (; first != last; ++first) {
-    init = op(init, *first);
-  }
+T reduce(const Policy &, InputIt, InputIt, T init, BinaryOperation) {
   return init;
 }
 
@@ -203,4 +110,4 @@ void stable_sort_by_key(const Policy &, KeyIt, KeyIt, ValueIt) {}
 template <typename Policy, typename KeyIt, typename ValueIt, typename Compare>
 void stable_sort_by_key(const Policy &, KeyIt, KeyIt, ValueIt, Compare) {}
 
-} // namespace thrust
+} // namespace thrust_replacement

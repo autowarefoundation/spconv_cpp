@@ -103,6 +103,8 @@ if (NOT CUMM_DISABLE_CMAKE_INSTALL)
           DESTINATION ${CUMM_CMAKECONFIG_INSTALL_DIR})
 
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/tensorview DESTINATION include)
+  install(DIRECTORY ${THRUST_REPLACEMENT_INCLUDE_DIR}/thrust_replacement
+          DESTINATION include)
 
 include(cmake/Packing.cmake)
   

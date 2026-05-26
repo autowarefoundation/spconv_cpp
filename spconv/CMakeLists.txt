@@ -39,6 +39,9 @@ install(TARGETS spconv
 
 # Install the header files
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../thrust_replacement/include/thrust_replacement
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
 
 # Export the targets
 install(EXPORT spconvTargets

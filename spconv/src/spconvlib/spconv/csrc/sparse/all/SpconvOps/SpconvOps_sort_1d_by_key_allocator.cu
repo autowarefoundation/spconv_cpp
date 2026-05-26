@@ -42,56 +42,56 @@ tv::Tensor SpconvOps::sort_1d_by_key_allocator(tv::Tensor data, std::function<st
     using T_ = int32_t;
     tv::dispatch_int<1, 2, 3, 4>(mask_count, [&](auto IV){
         constexpr int I = TV_DECLTYPE(IV)::value;
-        // we can't use thrust::tuple in mp_repeat_c directly because
+        // we can't use thrust_replacement::tuple in mp_repeat_c directly because
         // thrust tuple actually has fixed size template arguments.
-        using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust::tuple>;
-        thrust::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
-        thrust::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
-        auto thrust_ctx = thrust::cuda::par.on(stream_cu);
-        auto ctx2 = thrust::cuda::par(allocator).on(stream_cu);
-        thrust::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
+        using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust_replacement::tuple>;
+        thrust_replacement::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
+        thrust_replacement::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
+        auto thrust_ctx = thrust_replacement::cuda::par.on(stream_cu);
+        auto ctx2 = thrust_replacement::cuda::par(allocator).on(stream_cu);
+        thrust_replacement::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
     });
   }
   else if (data.dtype() == tv::DType(8)){
     using T_ = int64_t;
     tv::dispatch_int<1, 2, 3, 4>(mask_count, [&](auto IV){
         constexpr int I = TV_DECLTYPE(IV)::value;
-        // we can't use thrust::tuple in mp_repeat_c directly because
+        // we can't use thrust_replacement::tuple in mp_repeat_c directly because
         // thrust tuple actually has fixed size template arguments.
-        using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust::tuple>;
-        thrust::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
-        thrust::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
-        auto thrust_ctx = thrust::cuda::par.on(stream_cu);
-        auto ctx2 = thrust::cuda::par(allocator).on(stream_cu);
-        thrust::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
+        using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust_replacement::tuple>;
+        thrust_replacement::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
+        thrust_replacement::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
+        auto thrust_ctx = thrust_replacement::cuda::par.on(stream_cu);
+        auto ctx2 = thrust_replacement::cuda::par(allocator).on(stream_cu);
+        thrust_replacement::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
     });
   }
   else if (data.dtype() == tv::DType(10)){
     using T_ = uint32_t;
     tv::dispatch_int<1, 2, 3, 4>(mask_count, [&](auto IV){
         constexpr int I = TV_DECLTYPE(IV)::value;
-        // we can't use thrust::tuple in mp_repeat_c directly because
+        // we can't use thrust_replacement::tuple in mp_repeat_c directly because
         // thrust tuple actually has fixed size template arguments.
-        using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust::tuple>;
-        thrust::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
-        thrust::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
-        auto thrust_ctx = thrust::cuda::par.on(stream_cu);
-        auto ctx2 = thrust::cuda::par(allocator).on(stream_cu);
-        thrust::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
+        using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust_replacement::tuple>;
+        thrust_replacement::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
+        thrust_replacement::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
+        auto thrust_ctx = thrust_replacement::cuda::par.on(stream_cu);
+        auto ctx2 = thrust_replacement::cuda::par(allocator).on(stream_cu);
+        thrust_replacement::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
     });
   }
   else if (data.dtype() == tv::DType(11)){
     using T_ = uint64_t;
     tv::dispatch_int<1, 2, 3, 4>(mask_count, [&](auto IV){
         constexpr int I = TV_DECLTYPE(IV)::value;
-        // we can't use thrust::tuple in mp_repeat_c directly because
+        // we can't use thrust_replacement::tuple in mp_repeat_c directly because
         // thrust tuple actually has fixed size template arguments.
-        using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust::tuple>;
-        thrust::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
-        thrust::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
-        auto thrust_ctx = thrust::cuda::par.on(stream_cu);
-        auto ctx2 = thrust::cuda::par(allocator).on(stream_cu);
-        thrust::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
+        using T = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<T_>, I>, thrust_replacement::tuple>;
+        thrust_replacement::device_ptr<T> ptr_tr(reinterpret_cast<T*>(data.data_ptr<T_>()));
+        thrust_replacement::device_ptr<int32_t> ptr_k(indices.data_ptr<int32_t>());
+        auto thrust_ctx = thrust_replacement::cuda::par.on(stream_cu);
+        auto ctx2 = thrust_replacement::cuda::par(allocator).on(stream_cu);
+        thrust_replacement::sort_by_key(ctx2, ptr_tr, ptr_tr + data.dim(0), ptr_k);
     });
   }
   else{

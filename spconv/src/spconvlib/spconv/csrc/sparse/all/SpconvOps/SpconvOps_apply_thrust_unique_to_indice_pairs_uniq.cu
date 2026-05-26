@@ -28,10 +28,10 @@ int SpconvOps::apply_thrust_unique_to_indice_pairs_uniq(tv::Tensor data, ThrustA
   int uniq_size = data.dim(0);
   tv::dispatch<int32_t, int64_t>(data.dtype(), [&](auto I){
       using T = TV_DECLTYPE(I);
-      thrust::device_ptr<T> ptr_tr(data.data_ptr<T>());
-      auto thrust_ctx = thrust::cuda::par(allocator).on(reinterpret_cast<cudaStream_t>(stream_int));
-      thrust::sort(thrust_ctx, ptr_tr, ptr_tr + uniq_size);
-      auto new_end = thrust::unique(thrust_ctx, ptr_tr, ptr_tr + uniq_size);
+      thrust_replacement::device_ptr<T> ptr_tr(data.data_ptr<T>());
+      auto thrust_ctx = thrust_replacement::cuda::par(allocator).on(reinterpret_cast<cudaStream_t>(stream_int));
+      thrust_replacement::sort(thrust_ctx, ptr_tr, ptr_tr + uniq_size);
+      auto new_end = thrust_replacement::unique(thrust_ctx, ptr_tr, ptr_tr + uniq_size);
       num_out_act = new_end - ptr_tr - 1;
   });
   return num_out_act;

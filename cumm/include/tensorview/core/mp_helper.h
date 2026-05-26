@@ -679,5 +679,5 @@ constexpr std::size_t argument_size_v =
 // using TP1 = tv::mp_concat<tv::mp_list<int, float>, tv::mp_list<double>>;
 // using TP2 = tv::mp_repeat_c<tv::mp_list<int>, 5>;
 // using TP = tv::mp_rename<std::tuple, tv::mp_repeat_c<int, 5>>;
-// using TP3 = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<int>, 5>, thrust::tuple>;
+// using TP3 = tv::mp_rename<tv::mp_repeat_c<tv::mp_list<int>, 5>, thrust_replacement::tuple>;
 #endif
