@@ -20,6 +20,8 @@ configure_package_config_file(
     INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spconv
 )
 
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../thrust_replacement/include)
+include_directories(BEFORE ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_subdirectory(src)

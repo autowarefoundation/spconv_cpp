@@ -9,11 +9,15 @@ option(CUMM_DISABLE_CMAKE_INSTALL "disable cumm install" OFF)
 message (STATUS "AWDSAF ${CUMM_DISABLE_CMAKE_INSTALL}")
 set(CUMM_INCLUDE_PATH ${${PROJECT_NAME}_SOURCE_DIR}/include PARENT_SCOPE)
 
+set(THRUST_REPLACEMENT_INCLUDE_DIR
+    "${${PROJECT_NAME}_SOURCE_DIR}/../thrust_replacement/include")
+
 add_library(${PROJECT_NAME}_cpu INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME}_cpu ALIAS ${PROJECT_NAME}_cpu)
 target_include_directories(
   ${PROJECT_NAME}_cpu
-  INTERFACE $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>
+  INTERFACE $<BUILD_INTERFACE:${THRUST_REPLACEMENT_INCLUDE_DIR}>
+            $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>
             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_compile_features(${PROJECT_NAME}_cpu INTERFACE cxx_std_14)
@@ -32,7 +36,8 @@ if(${CUDAToolkit_FOUND})
 
   target_include_directories(
     ${PROJECT_NAME}
-    INTERFACE $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>
+    INTERFACE $<BUILD_INTERFACE:${THRUST_REPLACEMENT_INCLUDE_DIR}>
+              $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>
               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
   target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
